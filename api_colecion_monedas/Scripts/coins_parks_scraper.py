@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 
 def download_img(img_url, img_name):
-    url_save = f'api/img/America the Beautiful Quarters/{img_name}.jpg'
+    url_save = f'img/America the Beautiful Quarters/{img_name}.jpg'
     req = requests.get(img_url)
     response = req.content
     file = open(url_save, "wb")
