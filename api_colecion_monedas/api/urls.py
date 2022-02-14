@@ -6,9 +6,13 @@ urlpatterns = [
     #request(username, password, email, <coins>)
     path('collector/new/', new_collector_api_view, name='new_collector'), 
 
+    
+    #Login collector
+    #request (username, password)
+    path('collector/login/', login_collector_api_view, name='login_collector'),
 
-    #Info of the collector 
-    #request (pk_collector)
+
+
     #Add or delete a coin of the collector's collection
     #request (pk_collector, pk_coin)
     path('collector/', collector_api_view, name='collector'),   
@@ -19,9 +23,6 @@ urlpatterns = [
     path('collector/coins/', coins_collector_api_view, name='coins_collector'),
 
 
-    #Login collector
-    #request (username, password)
-    path('collector/login', login_collector_api_view, name='login_collector'),
 
 
 

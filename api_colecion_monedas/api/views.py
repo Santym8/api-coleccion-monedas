@@ -5,16 +5,37 @@ from rest_framework.decorators import api_view
 from django.shortcuts import redirect
 # Create your views here.
 
+#Creates a Collector (User)
+#request(username, password, email, coins)
+@api_view(['POST'])
+def new_collector_api_view(request):
+    if request.method == 'POST':
+        collector_serializer = CollectorSerializer(data=request.data)
+        if collector_serializer.is_valid():
+            collector_serializer.save()    
+            return Response(collector_serializer.data)
+        return Response(collector_serializer.errors)
 
-#Get a collector and update coins collection(Add-Delete coins of colector's colection)
+
+#Login, returns the id of a matching collector
+#request (username, password)
+@api_view(['GET'])
+def login_collector_api_view(request):
+    if request.method == 'GET':
+        collector = Collector.objects.filter(username = request.query_params['username'], password =request.query_params['password']).first()
+        if collector:
+            colllector_sirializer = CollectorSerializer(collector)
+            return Response(colllector_sirializer.data)
+        else:
+            return Response({'message':'invalid username or password'})
+
+
+#Updates coins collection(Add-Delete coins of colector's colection)
 #request (pk_collector, pk_coin)
-@api_view(['GET', 'PUT'])
+@api_view(['PUT'])
 def collector_api_view(request):
     collector = Collector.objects.filter(id=request.data['pk_collector']).first()
-    if collector:
-        if request.method=='GET':            
-            collector_serializer = CollectorSerializer(collector)
-            return Response(collector_serializer.data)    
+    if collector:      
         if request.method == 'PUT':
             coin = Coin.objects.filter(id=request.data['pk_coin']).first()
             if coin:
@@ -36,8 +57,8 @@ def collector_api_view(request):
 @api_view(['GET'])
 def coins_collector_api_view(request):
     if request.method == 'GET':
-        collector = Collector.objects.filter(id = request.data['pk_collector']).first()
-        coins_collection = Coin.objects.filter(id_collection =request.data['pk_collection'])
+        collector = Collector.objects.filter(id = request.query_params['pk_collector']).first()
+        coins_collection = Coin.objects.filter(id_collection =request.query_params['pk_collection'])
         if collector and coins_collection:
             coins_collector_send = []
             coins_collector = collector.coins.all()
@@ -56,28 +77,3 @@ def coins_collector_api_view(request):
             return Response(coins_collector_send)
         else:
             return Response({'message':'Error'})
-
-
-#Creates a Collector (User)
-#request(username, password, email, coins)
-@api_view(['POST'])
-def new_collector_api_view(request):
-    if request.method == 'POST':
-        collector_serializer = CollectorSerializer(data=request.data)
-        if collector_serializer.is_valid():
-            collector_serializer.save()    
-            return Response(collector_serializer.data)
-        return Response(collector_serializer.errors)
-
-
-#Login, returns the id of a matching collector
-#request (username, password)
-@api_view(['GET'])
-def login_collector_api_view(request):
-    if request.method == 'GET':
-        collector = Collector.objects.filter(username = request.data['username'], password = request.data['password']).first()
-        if collector:
-            colllector_sirializer = CollectorSerializer(collector)
-            return Response(colllector_sirializer.data)
-        else:
-            return Response({'message':'invalid username or password'})
