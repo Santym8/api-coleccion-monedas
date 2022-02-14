@@ -7,15 +7,16 @@ from django.shortcuts import redirect
 
 
 #Get a collector and update coins collection(Add-Delete coins of colector's colection)
+#request (pk_collector, pk_coin)
 @api_view(['GET', 'PUT'])
-def collector_api_view(request, pk=None, pk_coin=None):
-    collector = Collector.objects.filter(id=pk).first()
+def collector_api_view(request):
+    collector = Collector.objects.filter(id=request.data['pk_collector']).first()
     if collector:
         if request.method=='GET':            
             collector_serializer = CollectorSerializer(collector)
             return Response(collector_serializer.data)    
         if request.method == 'PUT':
-            coin = Coin.objects.filter(id=pk_coin).first()
+            coin = Coin.objects.filter(id=request.data['pk_coin']).first()
             if coin:
                 coins_collector = collector.coins.filter(id=coin.id).first()
                 if coins_collector:               
@@ -27,19 +28,16 @@ def collector_api_view(request, pk=None, pk_coin=None):
                 return Response(collector_serializer.data)
             else: 
                 return Response({'message':"The Coin does not exist"})            
-    return Response({'message':'Error'})
+    return Response({'message':'The Collector does not exist'})
 
-
-def image_serializer(url_image):
-    #To-do ImageSerializer
-    return url_image
     
 #returns all the coins of the collection and validates if the collector has each coin
+#reques (pk_collector, pk_collection)
 @api_view(['GET'])
-def coins_collector_api_view(request, pk_collector=None, pk_collection = None):
+def coins_collector_api_view(request):
     if request.method == 'GET':
-        collector = Collector.objects.filter(id = pk_collector).first()
-        coins_collection = Coin.objects.filter(id_collection = pk_collection)
+        collector = Collector.objects.filter(id = request.data['pk_collector']).first()
+        coins_collection = Coin.objects.filter(id_collection =request.data['pk_collection'])
         if collector and coins_collection:
             coins_collector_send = []
             coins_collector = collector.coins.all()
@@ -49,8 +47,8 @@ def coins_collector_api_view(request, pk_collector=None, pk_collection = None):
                     "name":coin.name,
                     "year":coin.year,
                     "description":coin.description,
-                    "image":image_serializer(coin.image),
-                    "found":False
+                    "found":False,
+                    "image":image_serializer(coin.image),               
                 }
                 if coins_collector.filter(id = coin.id).first():
                     coin_send['found'] = True           
@@ -60,7 +58,8 @@ def coins_collector_api_view(request, pk_collector=None, pk_collection = None):
             return Response({'message':'Error'})
 
 
-#Create a Collector (User)
+#Creates a Collector (User)
+#request(username, password, email, coins)
 @api_view(['POST'])
 def new_collector_api_view(request):
     if request.method == 'POST':
@@ -69,4 +68,16 @@ def new_collector_api_view(request):
             collector_serializer.save()    
             return Response(collector_serializer.data)
         return Response(collector_serializer.errors)
-        
+
+
+#Login, returns the id of a matching collector
+#request (username, password)
+@api_view(['GET'])
+def login_collector_api_view(request):
+    if request.method == 'GET':
+        collector = Collector.objects.filter(username = request.data['username'], password = request.data['password']).first()
+        if collector:
+            colllector_sirializer = CollectorSerializer(collector)
+            return Response(colllector_sirializer.data)
+        else:
+            return Response({'message':'invalid username or password'})

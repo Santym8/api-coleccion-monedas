@@ -9,7 +9,7 @@ def download_img(img_url, img_name):
     file = open(url_save, "wb")
     file.write(response)
     file.close()
-    return  f'img/America the Beautiful Quarters/{img_name}.jpg'
+    return  f'api/img/America the Beautiful Quarters/{img_name}.jpg'
 
 url = 'https://www.usmint.gov/learn/kids/about-the-mint/america-the-beautiful-quarters'
 

@@ -21,7 +21,7 @@ class Coin(models.Model):
     coin_number = models.IntegerField('# Coin',null=False, blank=False)
     name = models.CharField('Name',max_length=100)
     year = models.IntegerField('Year of creation',null=False, blank=False)
-    image = models.ImageField('Image')
+    image = models.URLField()
     status = models.BooleanField('Status',default=True)
     description = models.TextField('Description', blank=True)
 
@@ -33,7 +33,7 @@ class Coin(models.Model):
         return f'{self.year}--{self.name}'
 
 class Collector(models.Model):
-    username = models.CharField('UserName', max_length=50 , null=False, blank=False)
+    username = models.CharField('UserName', max_length=50 , null=False, blank=False, unique=True)
     password = models.CharField('Passaword', max_length=30, null=False, blank=False)
-    email = models.EmailField('Email', null=False, blank=False)
+    email = models.EmailField('Email', null=False, blank=False, unique=True)
     coins = models.ManyToManyField(Coin, blank=True, null=True)

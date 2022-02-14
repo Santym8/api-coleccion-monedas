@@ -1,7 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from .models import Collector
-from django.contrib.auth.models import User
+import base64
 
 class CollectorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,4 +11,10 @@ class CollectorSerializer(serializers.ModelSerializer):
 class CollectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collector
-        fields = '__all__'
+        fields = ['id','username', 'email']
+
+
+def image_serializer(url_image):
+    with open(url_image, mode='rb') as file:
+        img = file.read()
+    return base64.encodebytes(img).decode('utf-8')
