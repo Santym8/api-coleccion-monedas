@@ -22,7 +22,8 @@ def new_collector_api_view(request):
 @api_view(['GET'])
 def login_collector_api_view(request):
     if request.method == 'GET':
-        collector = Collector.objects.filter(username = request.query_params['username'], password =request.query_params['password']).first()
+        query_params = request.query_params
+        collector = Collector.objects.filter(username = query_params.get('username') ,password =query_params.get('password')).first()      
         if collector:
             colllector_sirializer = CollectorSerializer(collector)
             return Response(colllector_sirializer.data)
@@ -34,10 +35,10 @@ def login_collector_api_view(request):
 #request (pk_collector, pk_coin)
 @api_view(['PUT'])
 def collector_api_view(request):
-    collector = Collector.objects.filter(id=request.data['pk_collector']).first()
+    collector = Collector.objects.filter(id=request.data.get('pk_collector')).first()
     if collector:      
         if request.method == 'PUT':
-            coin = Coin.objects.filter(id=request.data['pk_coin']).first()
+            coin = Coin.objects.filter(id=request.data.get('pk_coin')).first()
             if coin:
                 coins_collector = collector.coins.filter(id=coin.id).first()
                 if coins_collector:               
@@ -57,8 +58,8 @@ def collector_api_view(request):
 @api_view(['GET'])
 def coins_collector_api_view(request):
     if request.method == 'GET':
-        collector = Collector.objects.filter(id = request.query_params['pk_collector']).first()
-        coins_collection = Coin.objects.filter(id_collection =request.query_params['pk_collection'])
+        collector = Collector.objects.filter(id = request.query_params.get('pk_collector')).first()
+        coins_collection = Coin.objects.filter(id_collection =request.query_params.get('pk_collection')).first()
         if collector and coins_collection:
             coins_collector_send = []
             coins_collector = collector.coins.all()
