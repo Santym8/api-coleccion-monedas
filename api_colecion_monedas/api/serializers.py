@@ -1,3 +1,4 @@
+from dataclasses import field
 from unittest.util import _MAX_LENGTH
 from rest_framework import serializers
 from .models import Collector
@@ -12,6 +13,11 @@ class CollectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collector
         fields = ['id','username', 'email']
+
+class NewCollectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collector
+        fields = '__all__'
 
 
 def image_serializer(url_image):

@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 @api_view(['POST'])
 def new_collector_api_view(request):
     if request.method == 'POST':
-        collector_serializer = CollectorSerializer(data=request.data)
+        collector_serializer = NewCollectorSerializer(data=request.data)
         if collector_serializer.is_valid():
             collector_serializer.save()    
             return Response(collector_serializer.data)
