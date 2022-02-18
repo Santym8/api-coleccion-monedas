@@ -14,7 +14,7 @@ def new_collector_api_view(request):
         if collector_serializer.is_valid():
             collector_serializer.save()    
             return Response(collector_serializer.data)
-        return Response(collector_serializer.errors)
+        return Response({'message':'Error'})
 
 
 #Login, returns the id of a matching collector
@@ -35,6 +35,7 @@ def login_collector_api_view(request):
 #request (pk_collector, pk_coin)
 @api_view(['PUT'])
 def collector_api_view(request):
+    print(request.data)
     collector = Collector.objects.filter(id=request.data.get('pk_collector')).first()
     if collector:      
         if request.method == 'PUT':
@@ -59,7 +60,7 @@ def collector_api_view(request):
 def coins_collector_api_view(request):
     if request.method == 'GET':
         collector = Collector.objects.filter(id = request.query_params.get('pk_collector')).first()
-        coins_collection = Coin.objects.filter(id_collection =request.query_params.get('pk_collection')).first()
+        coins_collection = Coin.objects.filter(id_collection =request.query_params.get('pk_collection'))
         if collector and coins_collection:
             coins_collector_send = []
             coins_collector = collector.coins.all()
@@ -70,7 +71,7 @@ def coins_collector_api_view(request):
                     "year":coin.year,
                     "description":coin.description,
                     "found":False,
-                    "image":image_serializer(coin.image),               
+                    "image":coin.image              
                 }
                 if coins_collector.filter(id = coin.id).first():
                     coin_send['found'] = True           
@@ -78,3 +79,12 @@ def coins_collector_api_view(request):
             return Response(coins_collector_send)
         else:
             return Response({'message':'Error'})
+
+
+@api_view(['GET'])
+def collection_api_view(request):
+    collection = Collection.objects.all()
+    collection_serializer = CollectionSerializer(collection, many = True)
+    if request.method == 'GET':              
+        return Response(collection_serializer.data)
+    return Response(collection_serializer.errors)

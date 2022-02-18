@@ -23,6 +23,10 @@ urlpatterns = [
     path('collector/coins/', coins_collector_api_view, name='coins_collector'),
 
 
+    #Get all collections
+    path('collections', collection_api_view, name='collections'),
+
+
 
 
 

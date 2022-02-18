@@ -32,7 +32,7 @@ for div in divs:
             'coin_number':count,
             'name':name.text,
             'year':year,
-            'image':download_img(img, f'{count}.{name.text}'),
+            'image':coin_container.find('img')['src']
             }
         count +=1
         coins.append(coin)
