@@ -36,4 +36,4 @@ class Collector(models.Model):
     username = models.CharField('UserName', max_length=50 , null=False, blank=False, unique=True)
     password = models.CharField('Passaword', max_length=30, null=False, blank=False)
     email = models.EmailField('Email', null=False, blank=False, unique=True)
-    coins = models.ManyToManyField(Coin, blank=True, null=True)
+    coins = models.ManyToManyField(Coin, blank=True)

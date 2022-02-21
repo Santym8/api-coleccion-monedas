@@ -2,7 +2,6 @@ from .models import Collector, Coin
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.shortcuts import redirect
 # Create your views here.
 
 #Creates a Collector (User)
@@ -35,11 +34,10 @@ def login_collector_api_view(request):
 #request (pk_collector, pk_coin)
 @api_view(['PUT'])
 def collector_api_view(request):
-    print(request.data)
-    collector = Collector.objects.filter(id=request.data.get('pk_collector')).first()
+    collector = Collector.objects.filter(id=request.data['body'].get('pk_collector')).first()
     if collector:      
         if request.method == 'PUT':
-            coin = Coin.objects.filter(id=request.data.get('pk_coin')).first()
+            coin = Coin.objects.filter(id=request.data['body'].get('pk_coin')).first()
             if coin:
                 coins_collector = collector.coins.filter(id=coin.id).first()
                 if coins_collector:               
@@ -66,6 +64,7 @@ def coins_collector_api_view(request):
             coins_collector = collector.coins.all()
             for coin in coins_collection:
                 coin_send = {
+                    "id":coin.id,
                     "coin_number":coin.coin_number,
                     "name":coin.name,
                     "year":coin.year,
